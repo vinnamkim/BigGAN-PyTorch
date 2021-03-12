@@ -9,8 +9,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.nn import Parameter as P
 
-import layers
-from sync_batchnorm import SynchronizedBatchNorm2d as SyncBatchNorm2d
+from . import layers
+from .sync_batchnorm import SynchronizedBatchNorm2d as SyncBatchNorm2d
 
 
 # Architectures for G
@@ -312,7 +312,9 @@ class Discriminator(nn.Module):
     # Fp16?
     self.fp16 = D_fp16
     # Architecture
-    self.arch = D_arch(self.ch, self.attention)[resolution]
+
+    if not hasattr(self, 'arch'):
+      self.arch = D_arch(self.ch, self.attention)[resolution]
 
     # Which convs, batchnorms, and linear layers to use
     # No option to turn off SN in D right now
